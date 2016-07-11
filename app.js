@@ -32,17 +32,12 @@ app.controller('TrailsCtrl',function($scope){
   //   $scope.wines = data;
   // });
 
-  $scope.trails = [{profile:"/planning/elevation-profile.jpg",name:"Foof",comments:"Comments",votes:"3"}]
-  console.log('trails');
-
-  $scope.hello = "wha??"
+  $scope.trails = [];
 
   $scope.addTrail = function(search){
     // add some default data for testing
     newTrail = {profile:"planning/elevation-profile.jpg",name:search,comments:"Comments",votes:"3"};
     $scope.trails.push(newTrail);
-    console.log($scope.trails);
-    window.trails = $scope.trails;
     $scope.search = '';
 
     // return $scope.trails
