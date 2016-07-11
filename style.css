@@ -1,0 +1,64 @@
+body {
+  font-family: 'Cabin', sans-serif;
+}
+
+.banner {
+  font-family: 'Lobster Two', cursive;
+  height: 60px;
+  font-size: 40pt;
+}
+
+.map-row {
+  max-height:350px;
+  overflow:hidden;
+}
+
+.map {
+  width:100%;
+  min-height:100px;
+}
+
+.traillist {
+  height: 60px;
+}
+
+.trailname {
+  vertical-align: top;
+  display: inline-block;
+}
+
+.profile {
+  height: 60px;
+}
+
+.search {
+  width: 94% !important;
+}
+
+.group:before,
+.group:after {
+  content: "";
+  display: table;
+}
+.group:after {
+  clear: both;
+}
+.group {
+  clear: both;
+  *zoom: 1;
+}
+section {
+  float: left;
+  margin: 0 1.5%;
+  width: 30%;
+  z-index: 0;
+}
+aside {
+  float: right;
+  margin: 0 1.5%;
+  width: 63%;
+  z-index: 1;
+}
+.date {
+  float: right;
+}

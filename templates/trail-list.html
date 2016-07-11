@@ -1,0 +1,13 @@
+<div ng-repeat='trail in trails | orderBy: "votes"'>
+  <!-- <div class='col-md-2'><img class='profile' src='{{trail.profile}}'></div> -->
+  <div class="row">
+    <div class='col-md-2'><img class='profile' ng-src='{{trail.profile}}'></div>
+    <div class='col-md-3 trailname'><h3>{{trail.name}}</h3></div>
+    <div class='col-md-6'>{{trail.comments}}</div>
+    <div class='col-md-1'>
+      <div>{{trail.votes}} votes</div>
+      <div>arrows</div>
+    </div>
+  </div>
+  {{hello}}
+</div>
