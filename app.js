@@ -9,7 +9,7 @@ console.log('Angular is working.');
 app.config(function($routeProvider,$locationProvider){
   $routeProvider
     .when('/', {
-      templateUrl: '/templates/trail-list.html',
+      templateUrl: '/templates/viz.html',
       controller: 'TrailsCtrl'
     })
     // .when('/wines/:id', { // the "id" parameter 
