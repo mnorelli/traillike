@@ -4,8 +4,8 @@ window.onload = function(){
   // add map
   mapObj.mapDraw();
 
-  // mapObj.addPoint();
-  mapObj.getTrail("Kirby Cove Trail");
+  mapObj.addPoint();
+  // mapObj.getTrail("Kirby Cove Trail");
 
   // listener on Google Street View, needs to be added after the rest of the JS loads since it calls mapObj
   panoObj.panorama.addListener('pano_changed', function() {
@@ -17,9 +17,10 @@ window.onload = function(){
 }  // end of window.onload
 
 // starting location in Marin County, MapBox order = lnglat, Google order = latlng
-var start_loc_mapbox = [-122.515086,37.841327];
+// var start_loc_mapbox = [-122.515086,37.841327];  //  Gerbode Valley
+var start_loc_mapbox = [-122.535894,37.860740]
 var start_loc_google = switch_coords(start_loc_mapbox,"object");
-var start_zoom = 12;
+var start_zoom = 14;
 
 // make maps into objects so access to them won't be limited by scope
 var mapObj = {};
