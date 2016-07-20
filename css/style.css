@@ -6,6 +6,7 @@ body {
   font-family: 'Lobster Two', cursive;
   height: 60px;
   font-size: 40pt;
+  z-index: 10;
 }
 
 .viz > * {
