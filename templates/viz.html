@@ -6,14 +6,13 @@
   </form>
 </div>
 
-<div class='container'>
-<!-- Map and Street View -->
-  <div class="wrapper">
-    <header class="header">Header</header>
-    <article id="map"></article>
-    <aside class="aside aside-1">Aside 1</aside>
-    <aside class="aside aside-2" id="pano"></aside>
-    <footer class="footer">Footer</footer>
+<div class='container-fluid'>
+
+  <!-- Map and Street View -->
+  <div class='row viz'>
+    <aside class='aside aside-1 col-md-2'>Aside 1</aside>
+    <article id='map' class='col-md-6'></article>
+    <aside class='aside aside-2 col-md-4'></aside>
   </div>
 
     <!-- List of Trails -->
@@ -21,7 +20,7 @@
     <div class='traillist col-md-12'>
       <div ng-repeat='trail in trails'>
         <!-- <div class='col-md-2'><img class='profile' src='{{trail.profile}}'></div> -->
-        <div class="row">
+        <div class='row'>
           <div class='col-md-2'><img class='profile' ng-src='{{trail.profile}}'></div>
           <div class='col-md-3 trailname'><h3>{{trail.name}}</h3></div>
           <div class='col-md-6'>{{trail.comments}}</div>
