@@ -4,8 +4,8 @@ window.onload = function(){
   // add map
   mapObj.mapDraw();
 
-  mapObj.addPoint();
-  mapObj.getTrail("Kirby Cove Trail");
+
+  mapObj.getTrail("Lower Tennessee Valley Trail");
   mapObj.addTrail();
 
   // listener on Google Street View, needs to be added after the rest of the JS loads since it calls mapObj
@@ -59,54 +59,57 @@ mapObj.mapDraw = function(){
   this.map.addControl(new mapboxgl.Geocoder());
 }  
 
-mapObj.addPoint = function(){
-  // add initial point symbol on map
-  this.point = {"type": "FeatureCollection",
-    "features": [{"type": "Feature",
-      "geometry": {"type": "Point","coordinates": start_loc_mapbox
-        }
-    }]
-  };
+// mapObj.addPoint = function(coords){
+//   // add initial point symbol on map
+//   console.log("coords:",coords)
+//   this.point = {"type": "FeatureCollection",
+//     "features": [{"type": "Feature",
+//       "geometry": {"type": "Point","coordinates": [coords]
+//         }
+//     }]
+//   };
+//   console.log("addPoint called for:",mapObj.point)
 
-  // wait for map load to add point (prevents "Style is not yet loaded" error)
-  this.map.on('load', function () {
-    // with point at center of default map
-    mapObj.map.addSource('point', {
-        "type": "geojson",
-        "data": mapObj.point
-    });
-    mapObj.map.addLayer({
-        "id": "point",
-        "source": "point",
-        "type": "symbol",
-        "layout": {
-            "icon-image": "airport-15",
-            "icon-rotate": 90
-        }
-    });
-  });
+//   // wait for map load to add point (prevents "Style is not yet loaded" error)
+//   this.map.on('load', function () {
+//     // with point at center of default map
+//     console.log("map loaded for addPoint")
+//     mapObj.map.addSource('point', {
+//         "type": "geojson",
+//         "data": mapObj.point
+//     });
+//     mapObj.map.addLayer({
+//         "id": "point",
+//         "source": "point",
+//         "type": "symbol",
+//         "layout": {
+//             "icon-image": "airport-15",
+//             "icon-rotate": 90
+//         }
+//     });
+//   });
 
-  mapObj.movePoint = function(coords){
-    // change the point data and update the source layer to read in the new point
-    mapObj.point.features[0].geometry.coordinates = coords;
-    mapObj.map.getSource('point').setData(mapObj.point);
-  }
-
-  // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
-  // getPanoramaByLocation will return the nearest pano when the
-  // given radius is 50 meters or less.
-  mapObj.map.on('click', function(event) {
-    var sv = new google.maps.StreetViewService();
-    sv.getPanorama({location: switch_coords(event.lngLat,"object"), radius: 50}, processSVData);
-  });
+mapObj.movePoint = function(coords){
+  // change the point data and update the source layer to read in the new point
+  mapObj.point.features[0].geometry.coordinates = coords;
+  mapObj.map.getSource('point').setData(mapObj.point);
 }
+
+//   // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
+//   // getPanoramaByLocation will return the nearest pano when the
+//   // given radius is 50 meters or less.
+//   mapObj.map.on('click', function(event) {
+//     var sv = new google.maps.StreetViewService();
+//     sv.getPanorama({location: switch_coords(event.lngLat,"object"), radius: 50}, processSVData);
+//   });
+// }
 
 mapObj.getTrail = function(name){
   search_url = 'https://api.outerspatial.com/v0/trails?name='+name
   $.get(search_url)
     .done(function(data) {
-      console.log("data:",data)
-      console.log("data.data[0]._links.self:",data.data[0]._links.self)
+      // since the returned JSON includes multiple versions of the same named trail,
+      // the [0] returns the first, usually the last updated, from the set
       $.get(data.data[0]._links.self)  // json includes a URL to trail details
         .done(function(trail){
           mapObj.trail_geom = trail.geometry;
@@ -115,11 +118,8 @@ mapObj.getTrail = function(name){
             "properties": {},
             "geometry": mapObj.trail_geom
           }
-          // mapObj.centerPt = turf.coordAll(turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]}));
-          featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
-          mapObj.centerPt = featureCtr.geometry.coordinates;
-          window.centerPt = mapObj.centerPt
-          console.log("centerPt:", mapObj.centerPt)
+          mapObj.featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
+          mapObj.centerPt = mapObj.featureCtr.geometry.coordinates;
         })
         .fail(function() {console.log('error getting trail details'); })
     })
@@ -130,16 +130,10 @@ mapObj.addTrail = function(){
   // wait for map load to add point (prevents "Style is not yet loaded" error)
   this.map.on('load', function () {
     mapObj.map.addSource('trail', {
-    //   "type": "geojson",
-    //   "data": mapObj.trail_feature
-    "type": "geojson",
-    "data": mapObj.trail_feature
-    // {
-    //     "type": "Feature",
-    //     "properties": {},
-    //       "geometry": mapObj.trail_geom
-    //   }
-     });
+      "type": "geojson",
+      "data": mapObj.trail_feature
+    });
+    // add the selected trail
     mapObj.map.addLayer({
         "id": "trail",
         "type": "line",
@@ -153,8 +147,45 @@ mapObj.addTrail = function(){
             "line-width": 6
         }
     });
+    // fly to the visual center of the trail data
     mapObj.map.flyTo({center: mapObj.centerPt});
-    // mapObj.map.flyTo({center: start_loc_mapbox});
+
+    // define a point at that visual center location
+    // TODO:  fix the center point to be one of the points on the trail, maybe first?
+    mapObj.point = {"type": "FeatureCollection",
+      "features": [mapObj.featureCtr]
+    };
+    mapObj.map.addSource('point', {
+        "type": "geojson",
+        "data": mapObj.point
+    });
+    // and place it on the map
+    mapObj.map.addLayer({
+        "id": "point",
+        "source": "point",
+        "type": "symbol",
+        "layout": {
+            "icon-image": "airport-15",
+            "icon-rotate": 90
+        }
+    });
+    // and update the Street View to that point location
+    panoObj.sv = new google.maps.StreetViewService();
+    panoObj.sv.getPanorama({location: switch_coords(mapObj.centerPt,"object"), radius: 50}, processSVData);
+
+    // mapObj.movePoint = function(coords){
+    //   // change the point data and update the source layer to read in the new point
+    //   mapObj.point.features[0].geometry.coordinates = coords;
+    //   mapObj.map.getSource('point').setData(mapObj.point);
+    // }
+
+    // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
+    // getPanoramaByLocation will return the nearest pano when the
+    // given radius is 50 meters or less.
+    mapObj.map.on('click', function(event) {
+      // var sv = new google.maps.StreetViewService();
+      panoObj.sv.getPanorama({location: switch_coords(event.lngLat,"object"), radius: 50}, processSVData);
+    });
   });
 };
 
