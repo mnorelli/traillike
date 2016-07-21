@@ -4,13 +4,6 @@ window.onload = function(){
   // add map
   mapObj.mapDraw();
 
-  // look for trail
-  // mapObj.getTrail("Lower Tennessee Valley Trail");
-  // mapObj.getTrail("Dias Ridge Trail");
-  // mapObj.getTrail("Kirby Cove Trail");
-  // mapObj.getTrail("Muir Woods Annex Trail");
-  // and add to the map with a point, and update Street View
-  // mapObj.addTrail();
 
   // listener on Google Street View, needs to be added after the rest of the JS loads since it calls mapObj
   panoObj.panorama.addListener('pano_changed', function() {
@@ -18,17 +11,6 @@ window.onload = function(){
     new_point = [panoObj.panorama.getPosition().lng(),panoObj.panorama.getPosition().lat()];
     mapObj.movePoint(new_point);  
   });
-
-  // hard-coded click actions I hope to fire instead with Angular
-  // $("#Dias").on('click',function(){
-  //   mapObj.getTrail("Dias Ridge Trail");
-  //   mapObj.addTrail();
-  // });
-
-
-    // mapObj.getTrail("Dias Ridge Trail");
-    // mapObj.addTrail();
-
 
 }  // end of window.onload
 
@@ -104,12 +86,6 @@ mapObj.getTrail = function(name, cb){
         .done(function(data){
           // build up an object of data
           var trail = {};
-          // trail.trail_geom = data.geometry;
-          // trail.trail_feature = {
-          //   "type": "Feature",
-          //   "properties": {},
-          //   "geometry": trail.trail_geom
-          // }
           var trailGeom = data.geometry;
           trail.features = {
             "type": "Feature",
