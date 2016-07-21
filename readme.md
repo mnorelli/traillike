@@ -1,4 +1,4 @@
-# <img src="https://cloud.githubusercontent.com/assets/7833470/10899314/63829980-8188-11e5-8cdd-4ded5bcb6e36.png" height="60"> Angular Weekend Lab - TrailLike
+#TrailLike
 
 ![map](http://images.nationalgeographic.com/wpf/media-content/richmedia/0/473/project/trail-maps/img/glacier-main-610.jpg)
 
@@ -10,114 +10,115 @@
 Trying to decide what trail to take on your next hike?  Too hard to figure out how steep your trail is from your paper map?  Let TrailLike help you and your friends make a choice!  Choose some trails, see how steep they are, and vote on them with your friends.
 
 ####Goal
-Provide a single-page app with a map and a Firebase backend to allow multiple users to pick several trails of interest, see their elevation profiles, vote on the choices, and allow others to see their choices.
+TrailLike will provide a beautiful, secure, and well-built full-stack app solution with a map and other visualizations, and with a backend database, augmented with Firebase-hosted commenting to allow multiple users to pick and curate several trails of interest, see their elevation profiles and other details, vote on the choices, and allow others to see their selections.
 
 ##User Stories
 
-####A user may:
-- receive an invitation from another user to use the app to vote on a trail, or starts their own trail selection process and invites others to join
+####A general user without a login may:
 - navigate to the app and see map and search bar
-- search for a trail by name or click on one shown
-- see the chosen trail added to the list
-- show the trail with its elevation profile in a list of other trails 
-- click the trail in the list to open the elevation profile in a modal
-- upvote or downvote the trail in the list
-- see the votes of others
-- add a comment to the trail item
-- mark a the highest voted trail item as final which closes voting 
+- search for a trail by name or near a location, and click on one found
+- see the chosen trail added to the list and give it a name
+- see the trail with a thumbnail of its elevation profile in a list of other trails 
+- click the trail in the list to open a page showing a 3D-like representation, the elevation profile, Google Street View images where present, nearby amenities, distance/travel time, carbon foot print, or other details
+- sign up to use the features available to a logged in user
+ 
+####A logged in user may:
+- perform all the actions above
+- save a trail or a set of trails into a trip
+- add a comment to any trip in a trip
+- share the trip via email or link to start their own trail selection process and invite others to join
+- on user profile page, see a list of trips already authored
+- click any trip to see its trails, comments, votes and users who have been invited to comment
+- invite others to view or comment on an existing trip
+- upvote or downvote a trail in the trip
+- mark a the highest voted trail item as final which closes voting
 
-##Planning
+##Planning and Development
 
 <details><summary>Wireframes</summary>
 ![wireframe](https://ucarecdn.com/8ebec341-bc84-4563-9fcb-a99672b3334b/Wireframe.png =200x) 
-![wireframe modal](https://ucarecdn.com/f0058f43-66fc-44fc-94e4-16b5de665a2a/WireframeModal.png =200x)</details>
+![show](https://ucarecdn.com/5c2052c8-5e8b-4f07-ab06-e39f3f3578e8/ShowPage.jpg =200x)
+![signup](https://ucarecdn.com/c20252cd-8dc1-45f7-a17b-511f2771a13c/SignUp.jpg =200x)
+![profile](https://ucarecdn.com/a2e849fa-0965-4424-a5a4-71c57d8382fd/Profile.jpg =200x)
+</details>
+
+<details><summary>Entity Relationship Diagram (ERD)</summary>
+![ERD](https://ucarecdn.com/27100d72-4210-41c3-9d93-5e0c973f91f3/TrailLikeERD.jpg)
+</details>
+
+<details><summary>Notes on development</summary>
+
+###First scope
+
+Hopes for this project ran high, and I attempted to throw everything I could think of into the original design.  Most important of of all, I planned to make a trail interaction involving a single page where a trail would be shown in three contexts -- overhead map, Street View, and elevation profile graph -- that interact with each other.  I tested this for a weekend and made slow progress, but time constraints necessitate slimming down the scope and focusing on the minimum viable product.
+<details><summary>First project scope details</summary>
+
+#####Breaking up the user stories above into tasks and technologies to test
+Good advice: try the trail visulation piece first and back out to something simpler if it proves to challenging for the available time.
+
+#####Visualization
+Demonstrate a user interaction between a map, a profile, and Google Street View.
+
+Needs: a map with a route, an elevation profile of that route, and Street Views at places along the route.
+Should give a longitude/latitude that will change with user interaction at any of the three views whcih in turn change each of the other views
+
+To allow Maps and Street View, these uses must be enabled on my API key at the [Google dev console for project name: TrailLike](https://console.developers.google.com/apis/api/maps_backend/overview?project=traillike-5b077)
+
+- MAP: Google or MapBox, query locations in radius around a search term or a clicked point
+- SEARCH: OuterSpatial API data queried by MapBox map interactions
+- CONCATENATE: Link several trails together and treat as one.  Simple object concatenation?
+- INTERACTION: Add to list with Angular
+- DISPLAY:  3D-like representation built in WebGL or MapBox tilt.  Show nearby amenities as icons from OuterSpatial.  Calculate 3D distance. Calculate travel time based on a metric that must already exist?  Calculate calories burned.  Build into a beautiful display.
+- ELEVATIONS: Turn trail or concatenation of trails into an elevation profile.  Show using D3.
+
+#####Basic CRUD app 
+Use Rails to build structure around users and their trips, votes, comments.
+Angular mini-app in the front-end to handle search UI and voting. 
+
+- COMMENTING: Build a Firebase backend to allow real-time comments and voting.  Show on the trail page and the main page.
+- USERS: Use bcrypt, auth, and flash messages and restrictions on various pages.
+
+</details>
+
+###Current scope: Minimum Viable Product
+Map searches get added .
+
+</details>
+
+[Trello](https://trello.com/b/6cSDeqnQ/traillike) used to organize development process and tasking.
+
 
 ##Install
 
-This is a single-page, web-hosted, app.  Please navigate to [link coming soon](http://google.com)
-
-##Task List 
-only partially completed
-
-- [x] basic Angular app
-- [x] View
-- [ ] Firebase
-- [ ] button to add trail - use OpenTrails API
-- [ ] add trail lis t - use table module
-- [ ] add modal
-- [ ] add comment
-- [ ] add voting
-- [ ] add final to stop voting
-- [ ] add map - use map module
-- [ ] add trails - use OpenTrails
-- [ ] convert trail geometry to elevation profile - use grid module, use loading module
-- [ ] add share button functionality
+This is a web-hosted application. Please navigate to [link coming soon](http://google.com)
 
 ##Technologies Used
 
 - HTML/CSS/Javascript
-- Angular
-  - ngIf, ngSrc, ngController, ngApp, ngRepeat, ngModel
 - Bootstrap
-- Firebase to allow three-way data binding
-- embedded MapBox or OuterSpatial map
-- OuterSpatial API
+- Angular
 - Angular Modules
 - Custom angular directive for parsing JSON
+- Ruby on Rails
+- Firebase or ActionCable to allow three-way data binding
+- embedded MapBox or OuterSpatial map
+- OuterSpatial API
+- more...
 
-##Wish List
-- overlay the trail profiles on each other
+
+##Future Development
+
+<details><summary>Wish List</summary>
+
+- overlay the trail profiles on each other, which would need to...
 - recalculate the trail profiles based on a consistent y-axis among listed trails to enable an "apples-to-apples" comparison
+- use WebGL, Three.js, or A-Frame to provide a 3D-like experience of the trail data
+- link to OuterSpatial to allow source data updating
+- export trips to PDF Maps
+- add photos taken with PDF Maps back into the app
+- modals for login, profile
+- use friendly URLs to allow sharing
+-
+</details>
 
 
-
----
-
-##Original Assignment
-
-**Objective:** The goal of this project is to build an Angular application with the server/back-end of your choice. Your app will not have user authentication, since we'll cover SPA auth on Monday.
-
-## Requirements
-
-What you build is up to you, but you must follow these requirements:
-
-* Your Angular app must have at least TWO client-side routes (use either `ngRoute` or `ui-router`) with associated templates and controllers.
-* Your Angular app must send at least ONE HTTP request (use either `$http` or `ng-resource`) to any server.
-* In terms of your server / back-end, you have choices:
-	* External API
-	* Back-end as a service (e.g. [Firebase](https://firebase.google.com/))
-	* Build your own API
-
-* Your app should be beautifully designed and pleasant to use. Write user stories, draw wireframes, and use well-designed websites as inspiration.
-* Your code should be organized and commented, and you should push your project to GitHub with frequent, descriptive commit messages.
-* You should not write any jQuery code yourself. Try your best to do angular-style DOM manipulation using built-in and custom directives.
-
-**You are welcome to pair-program for this project. If you choose to pair, tag your partner in the pull request you submit to turn in your lab.**
-
-## App Ideas
-
-* <a href="http://josephrocca.com/startupideasgenerator" target="_blank">Startup Ideas Generator</a>
-* A Stack Overflow clone with questions, answers, comments, and votes.
-* A microblog, journal, or to do list.
-* A "Yelp for" - create reviews about anything - yoga studios, online stores, toast, you name it.
-* A flashcard app for studying, with decks of flash cards.
-* Anything else you can think of!
-
-## Example Stretch Features
-
-* Create and use a <a href="https://github.com/sf-wdi-24/intro-angular-lab/blob/master/custom-directives.md" target="_blank">custom angular directive</a>.
-* Use an <a href="https://angular-ui.github.io" target="_blank">angular-ui module</a> for a UI component or feature.
-* Incorporate an external Angular directive *other than an angular-ui module* (for example, `ngDraggable` or `ngStorage` - one place to browse is <a href="http://ngmodules.org" target="_blank">ng-modules</a>).
-
-## Getting Started
-
-1. Create an repo on Github to contain your project.
-1. Create an appropriate `.gitignore`.
-1. Create a `readme` explaining the purpose of your project, in addition to any other relevant information.
-1. Plan out your user-stories and simple wireframes
-1. Happy coding (don't forget to commit frequently)!
-
-## Some Resources
-
-* <a href="http://jsonplaceholder.typicode.com/" target="_blank">JSONPlaceholder</a> (RESTful API with mock JSON data)
-* <a href="https://super-crud.herokuapp.com" target="_blank">Super CRUD</a> (RESTful API with mock JSON data)
