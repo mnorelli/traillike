@@ -90,7 +90,7 @@ Map searches get added .
 
 ##Install
 
-This is a web-hosted application. Please navigate to [link coming soon](http://google.com)
+This is a web-hosted application. Please navigate to [BitBalloon](http://personnel-officer-eagle-45200.bitballoon.com/)
 
 ##Technologies Used
 
