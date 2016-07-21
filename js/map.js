@@ -4,8 +4,12 @@ window.onload = function(){
   // add map
   mapObj.mapDraw();
 
-
-  mapObj.getTrail("Lower Tennessee Valley Trail");
+  // look for trail
+  // mapObj.getTrail("Lower Tennessee Valley Trail");
+  // mapObj.getTrail("Kirby Cove Trail");
+  // mapObj.getTrail("Muir Woods Annex Trail");
+  mapObj.getTrail("Dias Ridge Trail");
+  // and add to the map with a point, and update Street View
   mapObj.addTrail();
 
   // listener on Google Street View, needs to be added after the rest of the JS loads since it calls mapObj
