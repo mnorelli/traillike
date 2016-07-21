@@ -118,7 +118,7 @@ This is a web-hosted application. Please navigate to [BitBalloon](http://personn
 - add photos taken with PDF Maps back into the app
 - modals for login, profile
 - use friendly URLs to allow sharing
--
+
 </details>
 
 
