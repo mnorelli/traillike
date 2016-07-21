@@ -45,7 +45,7 @@ app.controller('TrailsCtrl',function($scope){
 
 })
 
-// app.controller('WinesShowCtrl',function($scope,WineService,$routeParams){
+// app.controller('WinesShowCtrl',function($scope,WineServizce,$routeParams){
 //   $scope.wine = WineService.get($routeParams.id)
 // })
 

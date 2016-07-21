@@ -63,50 +63,11 @@ mapObj.mapDraw = function(){
   this.map.addControl(new mapboxgl.Geocoder());
 }  
 
-// mapObj.addPoint = function(coords){
-//   // add initial point symbol on map
-//   console.log("coords:",coords)
-//   this.point = {"type": "FeatureCollection",
-//     "features": [{"type": "Feature",
-//       "geometry": {"type": "Point","coordinates": [coords]
-//         }
-//     }]
-//   };
-//   console.log("addPoint called for:",mapObj.point)
-
-//   // wait for map load to add point (prevents "Style is not yet loaded" error)
-//   this.map.on('load', function () {
-//     // with point at center of default map
-//     console.log("map loaded for addPoint")
-//     mapObj.map.addSource('point', {
-//         "type": "geojson",
-//         "data": mapObj.point
-//     });
-//     mapObj.map.addLayer({
-//         "id": "point",
-//         "source": "point",
-//         "type": "symbol",
-//         "layout": {
-//             "icon-image": "airport-15",
-//             "icon-rotate": 90
-//         }
-//     });
-//   });
-
 mapObj.movePoint = function(coords){
   // change the point data and update the source layer to read in the new point
   mapObj.point.features[0].geometry.coordinates = coords;
   mapObj.map.getSource('point').setData(mapObj.point);
 }
-
-//   // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
-//   // getPanoramaByLocation will return the nearest pano when the
-//   // given radius is 50 meters or less.
-//   mapObj.map.on('click', function(event) {
-//     var sv = new google.maps.StreetViewService();
-//     sv.getPanorama({location: switch_coords(event.lngLat,"object"), radius: 50}, processSVData);
-//   });
-// }
 
 mapObj.getTrail = function(name){
   search_url = 'https://api.outerspatial.com/v0/trails?name='+name
@@ -122,8 +83,10 @@ mapObj.getTrail = function(name){
             "properties": {},
             "geometry": mapObj.trail_geom
           }
+
           mapObj.featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
           mapObj.centerPt = mapObj.featureCtr.geometry.coordinates;
+          window.trail_geom = mapObj.trail_geom  // trail_geom.coordinates[0][0]
         })
         .fail(function() {console.log('error getting trail details'); })
     })
@@ -148,7 +111,8 @@ mapObj.addTrail = function(){
         },
         "paint": {
             "line-color": "#800",
-            "line-width": 6
+            "line-width": 6,
+            "line-opacity": 0.5
         }
     });
     // fly to the visual center of the trail data
@@ -169,19 +133,13 @@ mapObj.addTrail = function(){
         "source": "point",
         "type": "symbol",
         "layout": {
-            "icon-image": "airport-15",
-            "icon-rotate": 90
+            "icon-image": "aquarium-15",
+            "icon-rotate": 0
         }
     });
     // and update the Street View to that point location
     panoObj.sv = new google.maps.StreetViewService();
     panoObj.sv.getPanorama({location: switch_coords(mapObj.centerPt,"object"), radius: 50}, processSVData);
-
-    // mapObj.movePoint = function(coords){
-    //   // change the point data and update the source layer to read in the new point
-    //   mapObj.point.features[0].geometry.coordinates = coords;
-    //   mapObj.map.getSource('point').setData(mapObj.point);
-    // }
 
     // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
     // getPanoramaByLocation will return the nearest pano when the
