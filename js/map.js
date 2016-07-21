@@ -43,7 +43,12 @@ var mapObj = {};
 var panoObj = {};
 
 mapObj.renderTrail = function(trail){
-  mapObj.getTrail("Dias Ridge Trail", function(data) {
+  if (mapObj.map.getSource('trail')) {
+    mapObj.map.removeSource('trail');
+    mapObj.map.removeSource('point');
+    console.log("removed")
+  }
+  mapObj.getTrail(trail.id, function(data) {
     // to be implemented
     console.log("calling add trail")
     mapObj.addTrail(data);
@@ -106,14 +111,14 @@ mapObj.getTrail = function(name, cb){
           //   "geometry": trail.trail_geom
           // }
           var trailGeom = data.geometry;
-          var features = {
+          trail.features = {
             "type": "Feature",
             "properties": {},
             "geometry": trailGeom
           }
 
           // trail.featureCtr = turf.center({"type": "FeatureCollection","features": [trail.trail_feature]});
-          var featureCtr = turf.center({"type": "FeatureCollection","features": [features]});
+          var featureCtr = turf.center({"type": "FeatureCollection","features": [trail.features]});
           trail.centerPt = featureCtr.geometry.coordinates;
           // get the coordinates of the first point in the first trail segment
           trail.first = trailGeom.coordinates[0][0]
@@ -129,11 +134,11 @@ mapObj.getTrail = function(name, cb){
 }
 
 mapObj.addTrail = function(trail){
-  // wait for map load to add point (prevents "Style is not yet loaded" error)
+
   console.log("got data:", trail)
     mapObj.map.addSource('trail', {
       "type": "geojson",
-      "data": mapObj.trail_feature
+      "data": trail.features
     });
     // add the selected trail
     mapObj.map.addLayer({
