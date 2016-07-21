@@ -5,12 +5,12 @@ window.onload = function(){
   mapObj.mapDraw();
 
   // look for trail
-  mapObj.getTrail("Lower Tennessee Valley Trail");
+  // mapObj.getTrail("Lower Tennessee Valley Trail");
   // mapObj.getTrail("Dias Ridge Trail");
   // mapObj.getTrail("Kirby Cove Trail");
   // mapObj.getTrail("Muir Woods Annex Trail");
   // and add to the map with a point, and update Street View
-  mapObj.addTrail();
+  // mapObj.addTrail();
 
   // listener on Google Street View, needs to be added after the rest of the JS loads since it calls mapObj
   panoObj.panorama.addListener('pano_changed', function() {
@@ -19,17 +19,37 @@ window.onload = function(){
     mapObj.movePoint(new_point);  
   });
 
+  // hard-coded click actions I hope to fire instead with Angular
+  // $("#Dias").on('click',function(){
+  //   mapObj.getTrail("Dias Ridge Trail");
+  //   mapObj.addTrail();
+  // });
+
+
+    // mapObj.getTrail("Dias Ridge Trail");
+    // mapObj.addTrail();
+
+
 }  // end of window.onload
 
 // starting location in Marin County, MapBox order = lnglat, Google order = latlng
 // var start_loc_mapbox = [-122.515086,37.841327];  //  Gerbode Valley
-var start_loc_mapbox = [-122.538726,37.8507]
+var start_loc_mapbox = [-122.517334, 37.845892]
 var start_loc_google = switch_coords(start_loc_mapbox,"object");
-var start_zoom = 14;
+var start_zoom = 11.5;
 
 // make maps into objects so access to them won't be limited by scope
 var mapObj = {};
 var panoObj = {};
+
+mapObj.renderTrail = function(trail){
+  mapObj.getTrail("Dias Ridge Trail", function(data) {
+    // to be implemented
+    console.log("calling add trail")
+    mapObj.addTrail(data);
+  });
+  
+}
 
 // Street View pano, fires from script call in index
 function initPano() {
@@ -48,7 +68,7 @@ function initPano() {
     });
 }
 
-// MapBox map, geocoder control, point
+// MapBox map
 mapObj.mapDraw = function(){
   // make map object
   mapboxgl.accessToken = 'pk.eyJ1IjoibW5vcmVsbGkiLCJhIjoiU3BCcTNJQSJ9.4EsgnQLWdR10NXrt7aBYGw';
@@ -60,7 +80,7 @@ mapObj.mapDraw = function(){
   });
 
   // add geocoder search box
-  this.map.addControl(new mapboxgl.Geocoder());
+  // this.map.addControl(new mapboxgl.Geocoder());
 }  
 
 mapObj.movePoint = function(coords){
@@ -69,34 +89,48 @@ mapObj.movePoint = function(coords){
   mapObj.map.getSource('point').setData(mapObj.point);
 }
 
-mapObj.getTrail = function(name){
+mapObj.getTrail = function(name, cb){
   search_url = 'https://api.outerspatial.com/v0/trails?name='+name
   $.get(search_url)
     .done(function(data) {
       // since the returned JSON includes multiple versions of the same named trail,
       // the [0] returns the first, usually the last updated, from the set
       $.get(data.data[0]._links.self)  // json includes a URL to trail details
-        .done(function(trail){
-          mapObj.trail_geom = trail.geometry;
-          mapObj.trail_feature = {
+        .done(function(data){
+          // build up an object of data
+          var trail = {};
+          // trail.trail_geom = data.geometry;
+          // trail.trail_feature = {
+          //   "type": "Feature",
+          //   "properties": {},
+          //   "geometry": trail.trail_geom
+          // }
+          var trailGeom = data.geometry;
+          var features = {
             "type": "Feature",
             "properties": {},
-            "geometry": mapObj.trail_geom
+            "geometry": trailGeom
           }
 
-          mapObj.featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
-          mapObj.centerPt = mapObj.featureCtr.geometry.coordinates;
-          mapObj.first = mapObj.trail_geom.coordinates[0][0]
-          mapObj.firstPt = turf.point(mapObj.first)
+          // trail.featureCtr = turf.center({"type": "FeatureCollection","features": [trail.trail_feature]});
+          var featureCtr = turf.center({"type": "FeatureCollection","features": [features]});
+          trail.centerPt = featureCtr.geometry.coordinates;
+          // get the coordinates of the first point in the first trail segment
+          trail.first = trailGeom.coordinates[0][0]
+          trail.firstPt = turf.point(trail.first)
+
+          // when done call callback with data
+          cb(trail)
+
         })
         .fail(function() {console.log('error getting trail details'); })
     })
     .fail(function() {console.log('error getting trail'); });
 }
 
-mapObj.addTrail = function(){
+mapObj.addTrail = function(trail){
   // wait for map load to add point (prevents "Style is not yet loaded" error)
-  this.map.on('load', function () {
+  console.log("got data:", trail)
     mapObj.map.addSource('trail', {
       "type": "geojson",
       "data": mapObj.trail_feature
@@ -117,12 +151,11 @@ mapObj.addTrail = function(){
         }
     });
     // fly to the visual center of the trail data
-    mapObj.map.flyTo({center: mapObj.centerPt});
+    mapObj.map.flyTo({center: trail.centerPt,zoom:14});
 
-    // define a point at that visual center location
-    // TODO:  fix the center point to be one of the points on the trail, maybe first?
+    // define a point at the start of one trail segment
     mapObj.point = {"type": "FeatureCollection",
-      "features": [mapObj.firstPt]
+      "features": [trail.firstPt]
     };
     mapObj.map.addSource('point', {
         "type": "geojson",
@@ -140,7 +173,7 @@ mapObj.addTrail = function(){
     });
     // and update the Street View to that point location
     panoObj.sv = new google.maps.StreetViewService();
-    panoObj.sv.getPanorama({location: switch_coords(mapObj.first,"object"), radius: 50}, processSVData);
+    panoObj.sv.getPanorama({location: switch_coords(trail.first,"object"), radius: 50}, processSVData);
 
     // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
     // getPanoramaByLocation will return the nearest pano when the
@@ -149,7 +182,6 @@ mapObj.addTrail = function(){
       // var sv = new google.maps.StreetViewService();
       panoObj.sv.getPanorama({location: switch_coords(event.lngLat,"object"), radius: 50}, processSVData);
     });
-  });
 };
 
 // returns Street View pano

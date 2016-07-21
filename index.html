@@ -38,7 +38,12 @@
   <!-- Map and Street View -->
   <div class='container-fluid'>
     <div class='row viz'>
-      <aside class='aside aside-1 col-md-2'>Aside 1</aside>
+      <aside class='aside aside-1 col-md-2'>
+        <button type="button" class="btn btn-info" id="TV">Lower Tennessee Valley Trail</button>
+        <button type="button" class="btn btn-info" id="Dias" onclick="mapObj.renderTrail('Dias Ridge Trail')">Dias Ridge Trail</button>
+        <button type="button" class="btn btn-info" id="Kirby">Kirby Cove Trail</button>
+        <button type="button" class="btn btn-info" id="Muir">Muir Woods Annex Trail</button>
+      </aside>
       <article id='map' class='col-md-6'></article>
       <aside id='pano' class='aside aside-2 col-md-4'></aside>
     </div>
