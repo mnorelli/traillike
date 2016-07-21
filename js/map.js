@@ -5,10 +5,10 @@ window.onload = function(){
   mapObj.mapDraw();
 
   // look for trail
-  // mapObj.getTrail("Lower Tennessee Valley Trail");
+  mapObj.getTrail("Lower Tennessee Valley Trail");
+  // mapObj.getTrail("Dias Ridge Trail");
   // mapObj.getTrail("Kirby Cove Trail");
   // mapObj.getTrail("Muir Woods Annex Trail");
-  mapObj.getTrail("Dias Ridge Trail");
   // and add to the map with a point, and update Street View
   mapObj.addTrail();
 
@@ -86,7 +86,8 @@ mapObj.getTrail = function(name){
 
           mapObj.featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
           mapObj.centerPt = mapObj.featureCtr.geometry.coordinates;
-          window.trail_geom = mapObj.trail_geom  // trail_geom.coordinates[0][0]
+          mapObj.first = mapObj.trail_geom.coordinates[0][0]
+          mapObj.firstPt = turf.point(mapObj.first)
         })
         .fail(function() {console.log('error getting trail details'); })
     })
@@ -110,9 +111,9 @@ mapObj.addTrail = function(){
             "line-cap": "round"
         },
         "paint": {
-            "line-color": "#800",
+            "line-color": "#ff0",
             "line-width": 6,
-            "line-opacity": 0.5
+            "line-opacity": 1
         }
     });
     // fly to the visual center of the trail data
@@ -121,7 +122,7 @@ mapObj.addTrail = function(){
     // define a point at that visual center location
     // TODO:  fix the center point to be one of the points on the trail, maybe first?
     mapObj.point = {"type": "FeatureCollection",
-      "features": [mapObj.featureCtr]
+      "features": [mapObj.firstPt]
     };
     mapObj.map.addSource('point', {
         "type": "geojson",
@@ -139,7 +140,7 @@ mapObj.addTrail = function(){
     });
     // and update the Street View to that point location
     panoObj.sv = new google.maps.StreetViewService();
-    panoObj.sv.getPanorama({location: switch_coords(mapObj.centerPt,"object"), radius: 50}, processSVData);
+    panoObj.sv.getPanorama({location: switch_coords(mapObj.first,"object"), radius: 50}, processSVData);
 
     // Using Street View Service, look for a nearby Street View panorama when the map is clicked.
     // getPanoramaByLocation will return the nearest pano when the
