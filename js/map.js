@@ -115,8 +115,11 @@ mapObj.getTrail = function(name){
             "properties": {},
             "geometry": mapObj.trail_geom
           }
-          mapObj.centerPt = turf.center(mapObj.trail_geom);
-          console.log(mapObj.trail_geom)
+          // mapObj.centerPt = turf.coordAll(turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]}));
+          featureCtr = turf.center({"type": "FeatureCollection","features": [mapObj.trail_feature]});
+          mapObj.centerPt = featureCtr.geometry.coordinates;
+          window.centerPt = mapObj.centerPt
+          console.log("centerPt:", mapObj.centerPt)
         })
         .fail(function() {console.log('error getting trail details'); })
     })
@@ -130,11 +133,12 @@ mapObj.addTrail = function(){
     //   "type": "geojson",
     //   "data": mapObj.trail_feature
     "type": "geojson",
-    "data": {
-        "type": "Feature",
-        "properties": {},
-          "geometry": mapObj.trail_geom
-      }
+    "data": mapObj.trail_feature
+    // {
+    //     "type": "Feature",
+    //     "properties": {},
+    //       "geometry": mapObj.trail_geom
+    //   }
      });
     mapObj.map.addLayer({
         "id": "trail",
@@ -149,7 +153,7 @@ mapObj.addTrail = function(){
             "line-width": 6
         }
     });
-    // mapObj.map.flyTo({center: mapObj.centerPt});
+    mapObj.map.flyTo({center: mapObj.centerPt});
     // mapObj.map.flyTo({center: start_loc_mapbox});
   });
 };
